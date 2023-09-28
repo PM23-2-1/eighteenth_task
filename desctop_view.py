@@ -127,6 +127,10 @@ class view_tables:
         self.lbl_done = tk.Label(self.bot_frame, text ='')
         self.lbl_done.pack()
 
+        # button to append values
+        self.button_add = tk.Button(self.bot_frame, text = 'Data add', width = 10, command = self.data_add)
+        self.button_add.pack()
+        
         # button to save to xlsx
         self.button_save = tk.Button(self.bot_frame, text = 'Data to xlsx', width = 10, command = self.save_to_xlsx)
         self.button_save.pack()
@@ -157,18 +161,69 @@ class view_tables:
                 self.lbl_done.config(text=f'Done {name.get_name_table()}')
                 self.master.title(name.get_name_table())
 
+    # new window to add data
+    def data_add(self, ):
+        self.newWindow = tk.Toplevel(self.master)
+        self.view = Append_to_sql(self.newWindow)
+
     # save data to xlsx
     def save_to_xlsx(self, ):
-        pass
+        saver = db.Tables_in_db()
+        saver.table_to_xlsx()
 
     # close window
     def close_windows(self):
         self.master.destroy()
 
-def main(): 
-    root = tk.Tk()
-    app = main_window(root)
-    root.mainloop()
+class Append_to_sql:
+    def __init__(self, master):
+        self.master = master
+        name = db_names.DB_names()
+        self.master.title(name.get_name_table())
+        self.frame = tk.Frame(self.master)
+        self.values = tk.Frame(self.master)
+        self.bot_frame = tk.Frame(self.master)
+        
+        # values append
+        self.lbl_date = tk.Label(self.values, text ='Дата ввоза мебели (дата):')
+        self.lbl_date.pack()
+        self.date = tk.Text(self.values, width=25, height=1)
+        self.date.pack()
 
-if __name__ == '__main__':
-    main()
+        self.lbl_department = tk.Label(self.values, text ='Отдел (текст):')
+        self.lbl_department.pack()
+        self.department = tk.Text(self.values, width=25, height=1)
+        self.department.pack()
+
+        self.lbl_type_of_furniture = tk.Label(self.values, text ='Вид мебели (текст):')
+        self.lbl_type_of_furniture.pack()
+        self.type_of_furniture = tk.Text(self.values, width=25, height=1)
+        self.type_of_furniture.pack()
+
+        self.lbl_price = tk.Label(self.values, text ='Цена мебели (текст):')
+        self.lbl_price.pack()
+        self.price = tk.Text(self.values, width=25, height=1)
+        self.price.pack()
+
+        self.lbl_done = tk.Label(self.values, text ='')
+        self.lbl_done.pack()
+
+        self.done_button = tk.Button(self.values, text = 'Save', width = 15, command = self.save_to_sql)
+        self.done_button.pack()
+
+        # Quit button
+        self.quitButton = tk.Button(self.bot_frame, text = 'Quit', width = 15, command = self.close_windows)
+        self.quitButton.pack()
+
+        # frames packing
+        self.frame.pack()
+        self.values.pack()
+        self.bot_frame.pack()
+
+    # save to sql
+    def save_to_sql(self, ):
+        pass
+
+    # close window
+    def close_windows(self):
+        self.master.destroy()
