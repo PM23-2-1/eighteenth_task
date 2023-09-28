@@ -1,5 +1,6 @@
 import tkinter as tk
 import db_names
+import db
 
 class main_window:
     def __init__(self, master):
@@ -44,7 +45,7 @@ class Data_bases:
         self.button1.pack(side=tk.LEFT)
 
         name = db_names.DB_names()
-        self.lbl = tk.Label(self.frame, text = name.get_name())
+        self.lbl = tk.Label(self.frame, text = '')
         self.lbl.pack(side=tk.LEFT)
 
         self.quitButton = tk.Button(self.bot_frame, text = 'Quit', width = 15, command = self.close_windows)
@@ -53,8 +54,8 @@ class Data_bases:
         self.bot_frame.pack()
 
     def update(self, ):
-        name = db_names.DB_names()
-        self.lbl.config(text=name.get_name())
+        db_get_names = db.Databases()
+        self.lbl.config(text='\n'.join([i['Database'] for i in db_get_names.get_databases()]))
 
     def close_windows(self):
         self.master.destroy()
