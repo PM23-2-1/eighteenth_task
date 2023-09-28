@@ -25,8 +25,9 @@ class Databases():
                                     cursorclass=pymysql.cursors.DictCursor)
             cursor = conn.cursor()
             name = db_names.DB_names()
-            cursor.execute("CREATE DATABASE IF NOT EXISTS `%s`" % name.get_name())
-            return True
+            if name.get_name() != None:
+                cursor.execute("CREATE DATABASE IF NOT EXISTS `%s`" % name.get_name())
+                return True
         except pymysql.err.MySQLError:
             return None
         
@@ -48,21 +49,37 @@ class Tables_in_db():
     def create_table(self,):
         try:
             name = db_names.DB_names()
-            conn = pymysql.connect(host='localhost',
-                                    user=env.USER,
-                                    password=env.PASSWORD,
-                                    database=name.get_name(),
-                                    cursorclass=pymysql.cursors.DictCursor)
-            cursor = conn.cursor()
-            with open('create_structure.sql', 'r') as sql_file:
-                sql_script = sql_file.read()
-                cursor.execute(sql_script % name.get_name_table())
-                conn.commit()
-                return True
+            if name.get_name_table() != None:
+                conn = pymysql.connect(host='localhost',
+                                        user=env.USER,
+                                        password=env.PASSWORD,
+                                        database=name.get_name(),
+                                        cursorclass=pymysql.cursors.DictCursor)
+                cursor = conn.cursor()
+                with open('create_structure.sql', 'r') as sql_file:
+                    sql_script = sql_file.read()
+                    cursor.execute(sql_script % name.get_name_table())
+                    conn.commit()
+                    return True
             return False
         except pymysql.err.MySQLError as e:
             print(e)
             return None
+        
+    def table_to_xlsx(self, ):
+        name = db_names.DB_names()
+        if name.get_name_table() != None:
+            try:
+                conn = pymysql.connect(host='localhost',
+                                        user=env.USER,
+                                        password=env.PASSWORD,
+                                        database=name.get_name(),
+                                        cursorclass=pymysql.cursors.DictCursor)
+                new_df = pd.read_sql("SELECT * FROM " + name.get_name_table(), conn)
+                new_df.to_excel("out.xlsx")
+            except pymysql.err.DatabaseError as e:
+                print(e)
+        return
 
 def check_db() -> None:
     try:

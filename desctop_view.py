@@ -99,7 +99,8 @@ class Data_bases:
 class view_tables:
     def __init__(self, master):
         self.master = master
-        self.master.title('Tables')
+        name = db_names.DB_names()
+        self.master.title(name.get_name_table())
         self.frame = tk.Frame(self.master)
         self.new_table_frame = tk.Frame(self.master)
         self.bot_frame = tk.Frame(self.master)
@@ -117,7 +118,7 @@ class view_tables:
             self.lbl.config(text='\n'.join([list(i.values())[0] for i in names]))
         
         # Create table button
-        self.create_table_button = tk.Button(self.new_table_frame, text = 'Create table', width = 15, command = self.create_table)
+        self.create_table_button = tk.Button(self.new_table_frame, text = 'Create table/\nConnect', width = 15, command = self.create_table)
         self.create_table_button.pack(side=tk.LEFT)
 
         self.name_db_table = tk.Text(self.new_table_frame, width=25, height=1)
@@ -125,6 +126,10 @@ class view_tables:
 
         self.lbl_done = tk.Label(self.bot_frame, text ='')
         self.lbl_done.pack()
+
+        # button to save to xlsx
+        self.button_save = tk.Button(self.bot_frame, text = 'Data to xlsx', width = 10, command = self.save_to_xlsx)
+        self.button_save.pack()
 
         # Quit button
         self.quitButton = tk.Button(self.bot_frame, text = 'Quit', width = 15, command = self.close_windows)
@@ -150,7 +155,11 @@ class view_tables:
             if db_create_table.create_table():
                 self.update()
                 self.lbl_done.config(text=f'Done {name.get_name_table()}')
+                self.master.title(name.get_name_table())
 
+    # save data to xlsx
+    def save_to_xlsx(self, ):
+        pass
 
     # close window
     def close_windows(self):

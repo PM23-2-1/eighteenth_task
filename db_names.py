@@ -8,8 +8,8 @@ class Singleton(type):
   
 class DB_names(metaclass=Singleton):
     def __init__(self,):
-        self._name = 0
-        self._name_table = 0
+        self._name = None
+        self._name_table = None
 
     def get_name(self, ):
         return self._name
