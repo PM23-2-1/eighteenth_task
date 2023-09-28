@@ -222,7 +222,42 @@ class Append_to_sql:
 
     # save to sql
     def save_to_sql(self, ):
-        pass
+        saver = db.Tables_in_db()
+        date = self.date.get(1.0, 'end-1c')
+        department = self.department.get(1.0, 'end-1c')
+        type_of_furniture = self.type_of_furniture.get(1.0, 'end-1c')
+        price = self.price.get(1.0, 'end-1c')
+        if saver.add_values_to_sql(date, department, type_of_furniture, price):
+            self.lbl_done.config(text='Added')
+            self.newWindow = tk.Toplevel(self.master)
+            self.view = View_data(self.newWindow)
+
+    # close window
+    def close_windows(self):
+        self.master.destroy()
+
+class View_data:
+    def __init__(self, master):
+        self.master = master
+        name = db_names.DB_names()
+        self.master.title(name.get_name_table())
+        self.frame = tk.Frame(self.master)
+        self.bot_frame = tk.Frame(self.master)
+
+        viewer = db.Tables_in_db()
+        
+        # values append
+        self.lbl_date = tk.Label(self.frame, text =viewer.get_all_values())
+        self.lbl_date.pack()
+
+        # Quit button
+        self.quitButton = tk.Button(self.bot_frame, text = 'Quit', width = 15, command = self.close_windows)
+        self.quitButton.pack()
+
+        # frames packing
+        self.frame.pack()
+        self.bot_frame.pack()
+        
 
     # close window
     def close_windows(self):
