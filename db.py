@@ -15,7 +15,34 @@ class Databases():
             cursor.execute("SHOW DATABASES")
             return cursor.fetchall()
         except pymysql.err.MySQLError as e:
-            return e
+            return None
+        
+    def create_database(self, ):
+        try:
+            conn = pymysql.connect(host='localhost',
+                                    user=env.USER,
+                                    password=env.PASSWORD,
+                                    cursorclass=pymysql.cursors.DictCursor)
+            cursor = conn.cursor()
+            name = db_names.DB_names()
+            cursor.execute("CREATE DATABASE IF NOT EXISTS `%s`" % name.get_name())
+            return True
+        except pymysql.err.MySQLError:
+            return None
+        
+class tables_in_db():
+    def get_tables(self):
+        try:
+            name = db_names.DB_names()
+            conn = pymysql.connect(host='localhost',
+                                    user=env.USER,
+                                    password=env.PASSWORD,
+                                    database=name.get_name(),
+                                    cursorclass=pymysql.cursors.DictCursor)
+            new_df = pd.read_sql("SELECT * FROM " + name.get_name_table(), conn)
+            return new_df
+        except pymysql.err.MySQLError as e:
+            return None
 
 def check_db() -> None:
     try:

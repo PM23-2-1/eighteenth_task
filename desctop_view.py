@@ -2,61 +2,80 @@ import tkinter as tk
 import db_names
 import db
 
+# main window
 class main_window:
     def __init__(self, master):
         self.master = master
         self.new_db_frame = tk.Frame(self.master)
         self.buttons_frame = tk.Frame(self.master)
 
+        # button and text to create new db
         self.button1 = tk.Button(self.new_db_frame, text = 'New database', width = 10, command = self.new_database)
         self.button1.pack(side=tk.LEFT)
 
         self.name_db = tk.Text(self.new_db_frame, width=25, height=1)
         self.name_db.pack(side=tk.LEFT)
 
-        self.lbl = tk.Label(self.buttons_frame, text = "")
+        self.lbl = tk.Label(self.buttons_frame, text ='')
         self.lbl.pack()
 
-        self.button_view_db = tk.Button(self.buttons_frame, text = 'View database', width = 10, command = self.new_view_db)
+        # button to view window with databases
+        self.button_view_db = tk.Button(self.buttons_frame, text = 'View databases', width = 10, command = self.new_view_db)
         self.button_view_db.pack()
 
+        # frames packing
         self.new_db_frame.pack()
         self.buttons_frame.pack()
 
-        self.newWindow = tk.Toplevel(self.master)
-        self.app = Data_bases(self.newWindow)
-
+    # create new database
     def new_database(self):
         name = db_names.DB_names()
         name.set_name(self.name_db.get(1.0, 'end-1c'))
-        self.lbl.config(text = self.name_db.get(1.0, 'end-1c'))
-
+        db_get_names = db.Databases()
+        names = db_get_names.create_database()
+        if names != None:
+            self.lbl.config(text='Done')
+        
+    # create window to view databases
     def new_view_db(self, ):
         self.newWindow = tk.Toplevel(self.master)
         self.view = Data_bases(self.newWindow)
 
+# window to view db
 class Data_bases:
     def __init__(self, master):
         self.master = master
         self.frame = tk.Frame(self.master)
         self.bot_frame = tk.Frame(self.master)
 
+        # update button
         self.button1 = tk.Button(self.frame, text = 'Update', width = 8, command = self.update)
         self.button1.pack(side=tk.LEFT)
 
-        name = db_names.DB_names()
+        # all databases
+        db_get_names = db.Databases()
+        names = db_get_names.get_databases()
+        if names != None:
+            self.lbl.config(text='\n'.join([i['Database'] for i in names]))
         self.lbl = tk.Label(self.frame, text = '')
         self.lbl.pack(side=tk.LEFT)
 
+        # Quit button
         self.quitButton = tk.Button(self.bot_frame, text = 'Quit', width = 15, command = self.close_windows)
         self.quitButton.pack()
+
+        # frames packing
         self.frame.pack()
         self.bot_frame.pack()
 
+    # update databases
     def update(self, ):
         db_get_names = db.Databases()
-        self.lbl.config(text='\n'.join([i['Database'] for i in db_get_names.get_databases()]))
+        names = db_get_names.get_databases()
+        if names != None:
+            self.lbl.config(text='\n'.join([i['Database'] for i in names]))
 
+    # close window
     def close_windows(self):
         self.master.destroy()
 
