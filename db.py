@@ -30,7 +30,7 @@ class Databases():
         except pymysql.err.MySQLError:
             return None
         
-class tables_in_db():
+class Tables_in_db():
     def get_tables(self):
         try:
             name = db_names.DB_names()
@@ -39,9 +39,29 @@ class tables_in_db():
                                     password=env.PASSWORD,
                                     database=name.get_name(),
                                     cursorclass=pymysql.cursors.DictCursor)
-            new_df = pd.read_sql("SELECT * FROM " + name.get_name_table(), conn)
-            return new_df
+            cursor = conn.cursor()
+            cursor.execute("SHOW TABLES;")
+            return cursor.fetchall()
         except pymysql.err.MySQLError as e:
+            return None
+        
+    def create_table(self,):
+        try:
+            name = db_names.DB_names()
+            conn = pymysql.connect(host='localhost',
+                                    user=env.USER,
+                                    password=env.PASSWORD,
+                                    database=name.get_name(),
+                                    cursorclass=pymysql.cursors.DictCursor)
+            cursor = conn.cursor()
+            with open('create_structure.sql', 'r') as sql_file:
+                sql_script = sql_file.read()
+                cursor.execute(sql_script % name.get_name_table())
+                conn.commit()
+                return True
+            return False
+        except pymysql.err.MySQLError as e:
+            print(e)
             return None
 
 def check_db() -> None:
